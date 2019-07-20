@@ -1,7 +1,8 @@
-require("Circle")
-require("Vector2")
-require("Polygon")
-require("Collision")
+require("engine_config")
+require(PHYSICS_ENGINE_PATH .. "Circle")
+require(PHYSICS_ENGINE_PATH .. "Vector2")
+require(PHYSICS_ENGINE_PATH .. "Polygon")
+require(PHYSICS_ENGINE_PATH .. "Collision")
 
 World = {
     constant_force = nil,
@@ -14,14 +15,11 @@ World.__index = World
 DYNAMIC_BODY = 0
 STATIC_BODY = 1
 
-GRAVITY_MAX = 0
-
 function World:init(fx, fy)
     local o = setmetatable({}, self)
 
     o.collision = Collision:init()
     o.constant_force = Vector2:init(fx, fy)
-    GRAVITY_MAX = fy * 200
 
     return o
 end
@@ -45,9 +43,9 @@ function World:applyForce()
     for k,v in pairs(self.gameObject) do
         if v['type'] == DYNAMIC_BODY then
             self.gameObject[k]['body']:applyForce(self.constant_force)
-            --[[ if self.gameObject[k]['body'].appliedForce.y > GRAVITY_MAX then
+            if self.gameObject[k]['body'].appliedForce.y > GRAVITY_MAX then
                 self.gameObject[k]['body'].appliedForce.y = GRAVITY_MAX
-            end ]]
+            end
         end
     end
 

@@ -1,4 +1,5 @@
-require("Vector2")
+require("engine_config")
+require(PHYSICS_ENGINE_PATH .. "Vector2")
 
 Collision = {
 

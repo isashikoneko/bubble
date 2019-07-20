@@ -1,4 +1,3 @@
-
 require("engine_config")
 require(PHYSICS_ENGINE_PATH .. "World")
 require(PHYSICS_ENGINE_PATH .. "Polygon")
@@ -24,6 +23,7 @@ PLAYER_VERTICAL_FORCE = 200
 local move_right = false
 local move_left = false
 local move_up = false
+local move_down = false
 
 local time = 0
 
@@ -41,15 +41,12 @@ function love.load()
     time = 1 / FPS
 
     -- init world
-    world = World:init(0, GRAVITY_SPEED)
+    world = World:init(0, 0)
 
     -- init game object
     player = Player:init(INIT_PLAYER_X, INIT_PLAYER_Y)
     world:addObject("player", player.body, 0)
-    world:addObject('ground', Polygon:init(0, 300, {{0, 0}, {WINDOWS_WIDTH * 3, 0}, {WINDOWS_WIDTH * 3, 500}, {0, 500}}, 0), 1)
-    world:addObject('block1', Polygon:init(300, 200, {{0, 0}, {50, 0}, {50, 20}, {0, 20}}, 0), 1)
-    world:addObject('block2', Polygon:init(500, 250, {{0, 0}, {50, -10}, {100, 0}, {100, 10}, {0, 10}}, 0), 1)
-    world:addObject('block3', Polygon:init(400, 200, {{0, 0}, {50, 0}, {50, 100}, {0, 100}}, 0), 1)
+    world:addObject('block1', Polygon:init(400, 200, {{0, 0}, {50, 0}, {50, 100}, {0, 100}}, 0), 1)
 
 end
 
@@ -58,9 +55,14 @@ function love.update(dt)
     local player_appliedForce = Vector2:init(0, 0)
 
     if love.keyboard.isDown("i") then
-        if not move_up then
-            player_appliedForce.y = PLAYER_VERTICAL_FORCE
+        if world.gameObject["player"]["body"].appliedForce.y < -VERTICAL_SPEED_MAX then
+            player_appliedForce.y = -PLAYER_VERTICAL_FORCE
+        else
+            world.gameObject["player"]["body"].appliedForce.y = -VERTICAL_SPEED_MAX
         end
+        move_up = true
+    else
+        move_up = false
     end
 
     if love.keyboard.isDown("l") then 
@@ -85,10 +87,25 @@ function love.update(dt)
         move_left = false
     end
 
+    if love.keyboard.isDown("k") then
+        if world.gameObject["player"]["body"].appliedForce.y < VERTICAL_SPEED_MAX then
+            player_appliedForce.y = PLAYER_VERTICAL_FORCE
+        else
+            world.gameObject["player"]["body"].appliedForce.y = VERTICAL_SPEED_MAX
+        end
+        move_down = true
+    else
+        move_down = false
+    end
+
     world.gameObject["player"]["body"]:applyForce(player_appliedForce)
 
     if not move_left and not move_right then
         world.gameObject["player"]["body"].appliedForce.x = 0
+    end
+
+    if not move_up and not move_down then
+        world.gameObject["player"]["body"].appliedForce.y = 0
     end
 
     world:applyForce()
@@ -96,12 +113,6 @@ function love.update(dt)
     world.gameObject["player"]["body"]:update(time)
 
     world:update(time)
-
-    move_up = true
-
-    if world.gameObject["player"]["body"].velocity.x == 0 and world.gameObject["player"]["body"].velocity.y == 0 then
-        move_up = false
-    end
 
     player.body = world.gameObject["player"]["body"]
 
@@ -123,4 +134,3 @@ function love.keypressed(key)
     end
 
 end
-

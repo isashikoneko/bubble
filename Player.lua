@@ -1,5 +1,6 @@
-require("Circle")
-require("Vector2")
+require("engine_config")
+require(PHYSICS_ENGINE_PATH .. "Circle")
+require(PHYSICS_ENGINE_PATH .. "Vector2")
 
 Player = {
     body = nil
@@ -8,7 +9,7 @@ Player = {
 Player.__index = Player
 
 RADIUS = 10
-MASS = 2
+MASS = 1/10
 
 function Player:init(pos_x, pos_y)
     local o = setmetatable({}, self)

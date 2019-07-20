@@ -1,4 +1,5 @@
-require("Vector2")
+require("engine_config")
+require(PHYSICS_ENGINE_PATH .. "Vector2")
 
 Circle = {
     center = nil,
@@ -30,6 +31,8 @@ function Circle:update(dt)
 
     self.velocity.x = self.acceleration.x * dt
     self.velocity.y = self.acceleration.y * dt
+
+    print("Player velocity = " .. self.velocity:toString() .. " and dt = " .. dt)
 
     self:translate((1 / 2) * (self.acceleration.x * dt * dt), (1 / 2) * (self.acceleration.y * dt * dt))
 
