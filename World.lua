@@ -14,11 +14,14 @@ World.__index = World
 DYNAMIC_BODY = 0
 STATIC_BODY = 1
 
+GRAVITY_MAX = 0
+
 function World:init(fx, fy)
     local o = setmetatable({}, self)
 
     o.collision = Collision:init()
     o.constant_force = Vector2:init(fx, fy)
+    GRAVITY_MAX = fy * 200
 
     return o
 end
@@ -42,6 +45,9 @@ function World:applyForce()
     for k,v in pairs(self.gameObject) do
         if v['type'] == DYNAMIC_BODY then
             self.gameObject[k]['body']:applyForce(self.constant_force)
+            --[[ if self.gameObject[k]['body'].appliedForce.y > GRAVITY_MAX then
+                self.gameObject[k]['body'].appliedForce.y = GRAVITY_MAX
+            end ]]
         end
     end
 
@@ -58,16 +64,19 @@ function World:update()
             for j,val in pairs(self.gameObject) do
                 if k ~= j then
 
+                    print("Dynamic " .. k .. " collide with " .. val['type'] .. " " .. j)
+
                     if v['body'].radius == nil then
 
                     else
 
-                        local collide, p_vector, p_distance = self.collision:circleToPolygon(v['object'], val['object'])
+                        local collide, p_vector, p_distance = self.collision:circleToPolygon(v.body, val.body)
 
                         if collide then
 
                             --print("(" .. p_vector.x .. ", " .. p_vector.y .. ") soit " .. p_vector:distance() .. " and distance = " .. p_distance)
-                    
+
+                            self.gameObject[k]['body'].velocity = Vector2:init(0, 0)
                             self.gameObject[k]['body']:translate(p_vector.x * p_distance, p_vector.y * p_distance)
                     
                         end

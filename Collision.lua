@@ -26,8 +26,8 @@ function Collision:circleToPolygon(circle, polygon)
             k = 1
         end
 
-        local a = Vector2:add(polygon.vertex[i], polygon.pos)
-        local b = Vector2:add(polygon.vertex[k], polygon.pos)
+        local a = polygon.vertex[i]:add(polygon.pos)
+        local b = polygon.vertex[k]:add(polygon.pos)
         local o = circle.center
 
         local ab = Vector2:getVector(a, b)
@@ -35,6 +35,8 @@ function Collision:circleToPolygon(circle, polygon)
         local ao = Vector2:getVector(a, o)
         local bo = Vector2:getVector(b, o)
 
+        local d_ao = ao:distance()
+        local d_bo = bo:distance()
         local d_ab = ab:distance()
         local ah = ab:dot(ao) / d_ab
         local bh = ba:dot(bo) / d_ab
@@ -44,7 +46,18 @@ function Collision:circleToPolygon(circle, polygon)
         
         local oh = math.sqrt(ao:distance() * ao:distance() - d_ah * d_ah)
 
-        if d_ah < d_ab + circle.radius and d_bh < d_ab + circle.radius then
+        --[[ print("Distance AH = " .. d_ah .. " < AB + radius soit " .. d_ab + circle.radius)
+        print("Distance BH = " .. d_bh .. " < AB + radius soit " .. d_ab + circle.radius)
+        print("Distance AB = " .. d_ab)
+        print("OH = " .. oh .. " < radius soit " .. circle.radius)
+        print("A coordonnee " .. a:toString())
+        print("B coordonnee " .. b:toString()) ]]
+        
+        --[[ print("H coordonnee " .. h:toString())
+        print("O coordonnee " .. circle.center:toString()) ]]
+
+
+        if d_ah < d_ab and d_bh < d_ab then
 
             if oh < circle.radius then
                 penetration_distance = circle.radius - oh
@@ -53,6 +66,20 @@ function Collision:circleToPolygon(circle, polygon)
                     a.y + (ah) * v.y
                 )
                 penetration_vector = Vector2:getVector(h, o)
+                penetration_vector = penetration_vector:getNormalize()
+                return true, penetration_vector, penetration_distance
+            end
+
+        elseif d_ah > d_ab and d_ah < d_ab + circle.radius and d_bh > d_ab and d_bh < d_ab + circle.radius then
+
+            if d_ao < center.radius then
+                penetration_distance = circle.radius - d_ao
+                penetration_vector = Vector2:getVector(a, o)
+                penetration_vector = penetration_vector:getNormalize()
+                return true, penetration_vector, penetration_distance
+            elseif d_bo < center.radius then
+                penetration_distance = circle.radius - bh
+                penetration_vector = Vector2:getVector(b, o)
                 penetration_vector = penetration_vector:getNormalize()
                 return true, penetration_vector, penetration_distance
             end
