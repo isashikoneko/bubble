@@ -59,7 +59,7 @@ function love.update(dt)
 
     if love.keyboard.isDown("i") then
         if not move_up then
-            player_appliedForce.y = PLAYER_VERTICAL_FORCE
+            player_appliedForce.y = -VERTICAL_SPEED_MAX
         end
     end
 
@@ -100,6 +100,7 @@ function love.update(dt)
     move_up = true
 
     if world.gameObject["player"]["body"].velocity.x == 0 and world.gameObject["player"]["body"].velocity.y == 0 then
+        world.gameObject["player"]["body"].appliedForce.y = 0
         move_up = false
     end
 
