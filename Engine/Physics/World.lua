@@ -62,7 +62,7 @@ function World:update()
             for j,val in pairs(self.gameObject) do
                 if k ~= j then
 
-                    print("Dynamic " .. k .. " collide with " .. val['type'] .. " " .. j)
+                    --print("Dynamic " .. k .. " collide with " .. val['type'] .. " " .. j)
 
                     if v['body'].radius == nil then
 
@@ -75,6 +75,7 @@ function World:update()
                             --print("(" .. p_vector.x .. ", " .. p_vector.y .. ") soit " .. p_vector:distance() .. " and distance = " .. p_distance)
 
                             self.gameObject[k]['body'].velocity = Vector2:init(0, 0)
+
                             self.gameObject[k]['body']:translate(p_vector.x * p_distance, p_vector.y * p_distance)
                     
                         end

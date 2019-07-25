@@ -4,12 +4,15 @@ require(PHYSICS_ENGINE_PATH .. "World")
 require(PHYSICS_ENGINE_PATH .. "Polygon")
 require("Player")
 require(PHYSICS_ENGINE_PATH .. "Vector2")
+require(GRAPHICS_ENGINE_PATH .. "Camera")
 
 
 local touched = false
 
 local world 
 local player
+
+local camera
 
 
 WINDOWS_WIDTH = 640
@@ -40,6 +43,10 @@ function love.load()
 
     time = 1 / FPS
 
+    -- init Camera
+    camera = Camera:init(0, 0, 0, 0, WINDOWS_WIDTH * 2, 0)
+    camera:scale(1.2, 1.2)
+
     -- init world
     world = World:init(0, GRAVITY_SPEED)
 
@@ -47,6 +54,7 @@ function love.load()
     player = Player:init(INIT_PLAYER_X, INIT_PLAYER_Y)
     world:addObject("player", player.body, 0)
     world:addObject('ground', Polygon:init(0, 300, {{0, 0}, {WINDOWS_WIDTH * 3, 0}, {WINDOWS_WIDTH * 3, 500}, {0, 500}}, 0), 1)
+    world:addObject('left_block', Polygon:init(-20, 0, {{0, 0}, {20, 0}, {20, WINDOWS_HEIGHT}, {0, WINDOWS_HEIGHT}}, 0), 1)
     world:addObject('block1', Polygon:init(300, 200, {{0, 0}, {50, 0}, {50, 20}, {0, 20}}, 0), 1)
     world:addObject('block2', Polygon:init(500, 250, {{0, 0}, {50, -10}, {100, 0}, {100, 10}, {0, 10}}, 0), 1)
     world:addObject('block3', Polygon:init(400, 200, {{0, 0}, {50, 0}, {50, 100}, {0, 100}}, 0), 1)
@@ -54,6 +62,8 @@ function love.load()
 end
 
 function love.update(dt)
+
+    local player_previous_x = world.gameObject["player"]["body"].center.x
 
     local player_appliedForce = Vector2:init(0, 0)
 
@@ -95,7 +105,7 @@ function love.update(dt)
 
     world.gameObject["player"]["body"]:update(time)
 
-    world:update(time)
+    world:update()
 
     move_up = true
 
@@ -106,12 +116,31 @@ function love.update(dt)
 
     player.body = world.gameObject["player"]["body"]
 
+
+    --Camera movement management
+
+    local camera_x = player.body.center.x - INIT_PLAYER_X
+    local camera_y = player.body.center.y - INIT_PLAYER_Y
+
+    if camera_x >= camera.offset.x and camera_x <= camera.limit.x then
+        camera.position.x = camera_x
+    end
+
+    if camera_y > camera.offset.y and camera_y < camera.limit.y then
+        camera.position.y = player.body.center.y - INIT_PLAYER_Y
+    end
+
+
 end
 
 function love.draw()
 
+    camera:set()
+
     world:draw()
     player:draw()
+
+    camera:unset()
 
 end
 

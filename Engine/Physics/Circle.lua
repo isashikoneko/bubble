@@ -25,14 +25,14 @@ function Circle:init(center, r, mass)
     return o
 end
 
-function Circle:update(dt)
+function Circle:update(dt, camera)
 
     self.acceleration = self.appliedForce:scalar(1 / self.mass)
 
     self.velocity.x = self.acceleration.x * dt
     self.velocity.y = self.acceleration.y * dt
 
-    print("Player velocity = " .. self.velocity:toString() .. " and dt = " .. dt)
+    --print("Player velocity = " .. self.velocity:toString() .. " and dt = " .. dt)
 
     self:translate((1 / 2) * (self.acceleration.x * dt * dt), (1 / 2) * (self.acceleration.y * dt * dt))
 
