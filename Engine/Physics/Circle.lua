@@ -25,7 +25,7 @@ function Circle:init(center, r, mass)
     return o
 end
 
-function Circle:update(dt, camera)
+function Circle:update(dt)
 
     self.acceleration = self.appliedForce:scalar(1 / self.mass)
 
@@ -42,6 +42,10 @@ function Circle:applyForce(f)
 
     self.appliedForce = self.appliedForce:add(f)
 
+end
+
+function Circle:applyConstantForce(f)
+    self.appliedForce = f
 end
 
 function Circle:translate(vx, vy)

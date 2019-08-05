@@ -8,8 +8,8 @@ Player = {
 
 Player.__index = Player
 
-RADIUS = 10
-MASS = 1/10
+RADIUS = 5
+MASS = 1/8
 
 function Player:init(pos_x, pos_y)
     local o = setmetatable({}, self)

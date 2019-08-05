@@ -14,6 +14,7 @@ World.__index = World
 
 DYNAMIC_BODY = 0
 STATIC_BODY = 1
+WHITE_ZONE = 2
 
 function World:init(fx, fy)
     local o = setmetatable({}, self)
@@ -36,6 +37,10 @@ function World:updateObject(name, body, type)
     self.gameObject[name]['type'] = type
 end
 
+function World:setType(name, type)
+    self.gameObject[name]['type'] = type
+end
+
 function World:applyForce()
 
     -- Apply constant force on dynamic object
@@ -51,7 +56,15 @@ function World:applyForce()
 
 end
 
-function World:update()
+function World:update(time)
+
+    --physics body update
+
+    for k,v in pairs(self.gameObject) do
+        if v.type == DYNAMIC_BODY then
+            self.gameObject[k].body:update(time)
+        end
+    end
 
     --collision management
 
@@ -65,6 +78,24 @@ function World:update()
                     --print("Dynamic " .. k .. " collide with " .. val['type'] .. " " .. j)
 
                     if v['body'].radius == nil then
+
+                        if val.body.radius == nil then
+
+                            local collide, p_vector, p_distance = self.collision:polygonToPolygon(v.body, val.body)
+                            --print("World: collision detection between " .. k .. " and " .. j .. " = ")
+                            --print(collide)
+
+                            if collide then
+
+                                --print("World: (" .. p_vector.x .. ", " .. p_vector.y .. ") soit " .. p_vector:distance() .. " and distance = " .. p_distance)
+
+                                self.gameObject[k]['body'].velocity = Vector2:init(0, 0)
+
+                                self.gameObject[k]['body']:translate(p_vector.x * p_distance, p_vector.y * p_distance)
+                        
+                            end
+
+                        end
 
                     else
 

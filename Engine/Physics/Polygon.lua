@@ -26,11 +26,16 @@ function Polygon:init(x, y, vertex, mass)
     o.acceleration = Vector2:init(0, 0)
     o.appliedForce = Vector2:init(0, 0)
 
+    print(#vertex)
+
     for i,v in ipairs(vertex) do
-        table.insert(o.points, v[1] + x)
-        table.insert(o.points, v[2] + y)
-        table.insert(o.vertex, Vector2:init(v[1], v[2]))
+        table.insert(o.points, v.x + x)
+        table.insert(o.points, v.y + y)
+        table.insert(o.vertex, Vector2:init(v.x, v.y))
     end
+
+    print(#o.points)
+    print()
 
     return o
 end
@@ -56,9 +61,11 @@ function Polygon:translate(vx, vy)
 end
 
 function Polygon:applyForce(f)
-
     self.appliedForce = self.appliedForce:add(f)
+end
 
+function Polygon:applyConstantForce(f)
+    self.appliedForce = f
 end
 
 function Polygon:draw()

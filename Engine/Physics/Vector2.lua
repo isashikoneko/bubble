@@ -35,6 +35,10 @@ function Vector2:distance()
     return math.sqrt(self.x * self.x + self.y * self.y)
 end
 
+function Vector2:getNormal()
+    return Vector2:init(self.y, -self.x)
+end
+
 function Vector2:distanceTo(v)
     return math.sqrt((self.x - v.x) * (self.x - v.x) + (self.y - v.y) * (self.y - v.y))
 end
